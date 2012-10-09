@@ -1,0 +1,17 @@
+{
+    "name": "isBinaryFile",
+    "version"         : "0.1.0",
+    "description": "Detects if a file is binary in Node.js. Similar to Perl's -B.",
+    "main"       : "./lib/panino.js",
+    "engines": {
+        "node": ">=0.6.0"
+    },
+    "maintainers": [{
+        "name": "Garen J. Torikisn Hidayat",
+        "email": "gjtorikian@gmail.com"
+    }],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/gjtorikian/isBinaryFile"
+    }
+}
