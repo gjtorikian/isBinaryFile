@@ -18,7 +18,7 @@ npm install isBinaryFile
 ## Usage
 
 ```javascript
-var isBinaryFile = require("isBinaryFile");
+var isBinaryFile = require("isbinaryfile");
 
 if (isBinaryFile(process.argv[2]))
 	console.log("It is!")
