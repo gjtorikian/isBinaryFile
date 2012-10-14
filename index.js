@@ -1,9 +1,9 @@
 var fs = require('fs');
 
-module.exports = function(file) {
+module.exports = function(file, statSize) {
 	// Read the file with no encoding for raw buffer access.
 	var bytes = fs.readFileSync(file); 
-	var size = fs.statSync(file).size;
+	var size = statSize || fs.statSync(file).size;
 	var suspicious_bytes = 0;
 	var total_bytes = size > 1024 ? 1024 : size;
 	

@@ -26,4 +26,9 @@ else
 	console.log("No.")
 ```
 
-Ta da.
+Ta da. If you've already `stat()`-ed a file, you can pass the stat's `size` info in to save time:
+
+```javascript
+var stat = lstatSync(process.argv[2])
+var isBF = isBinaryFile(process.argv[2], stat.size());
+```
