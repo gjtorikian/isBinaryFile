@@ -7,7 +7,9 @@ Detects if a file is binary in Node.js. Similar to [Perl's `-B` switch](http://s
 * checks for a `null` byte; if it's found, it's binary
 * flags non-ASCII characters. After a certain number of "weird" characters, the file is flagged as binary
 
-Please make sure the file exists before calling this function.
+It's also pretty much taken from [ag](https://github.com/ggreer/the_silver_searcher).
+
+Note: please make sure the file exists before calling this function.
 
 ## Installation
 
