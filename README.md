@@ -7,7 +7,7 @@ Detects if a file is binary in Node.js. Similar to [Perl's `-B` switch](http://s
 * checks for a `null` byte; if it's found, it's binary
 * flags non-ASCII characters. After a certain number of "weird" characters, the file is flagged as binary
 
-It's also pretty much taken from [ag](https://github.com/ggreer/the_silver_searcher).
+All the logic is also pretty much ported from [ag](https://github.com/ggreer/the_silver_searcher).
 
 Note: please make sure the file exists before calling this function.
 
@@ -33,7 +33,7 @@ else
 Ta da. 
 
 
-However, if you've already `stat()`-ed a file, you can pass in both the file's raw data and the stat's `size` info to save time:
+However, if you've already read and `stat()`-ed a file (for some other reason), you can pass in both the file's raw data and the stat's `size` info to save time:
 
 ```javascript
 fs.readFile(process.argv[2], function(err, data) {
@@ -45,3 +45,13 @@ fs.readFile(process.argv[2], function(err, data) {
 	});
 });
 ```
+
+## Testing
+
+Install mocha on your machine:
+
+```
+npm install mocha -g
+```
+
+Then go into the _tests_ directory, and type `mocha test.js`.
