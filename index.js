@@ -4,6 +4,8 @@ module.exports = function(bytes, size) {
     // Read the file with no encoding for raw buffer access.
     if (size === undefined) {
         var file = bytes;
+        if (!fs.existsSync(file))
+           return false;
         bytes = fs.readFileSync(file);
         size = fs.statSync(file).size;
     } 
