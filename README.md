@@ -9,7 +9,7 @@ Detects if a file is binary in Node.js. Similar to [Perl's `-B` switch](http://s
 
 All the logic is also pretty much ported from [ag](https://github.com/ggreer/the_silver_searcher).
 
-Note: if the file doesn't exists or it is empty, this function returns false.
+Note: if the file doesn't exist or it is empty, this function returns `false`.
 
 ## Installation
 
