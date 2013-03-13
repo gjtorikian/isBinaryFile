@@ -11,7 +11,7 @@ module.exports = function(bytes, size) {
     } 
 
     var suspicious_bytes = 0;
-    var total_bytes = size > 1024 ? 1024 : size;
+    var total_bytes = size > 512 ? 512 : size;
     
     if (size == 0)
         return false;
@@ -22,11 +22,6 @@ module.exports = function(bytes, size) {
     }
 
     for (var i = 0; i < total_bytes; i++) {  
-        // Read at least 32 bytes before making a decision
-        if (i > 32 && (suspicious_bytes * 100) / total_bytes > 10) {
-            return true;
-        } 
-
         if (bytes[i] == '0') {
             // NULL char. It's binary
             return true;
@@ -47,6 +42,10 @@ module.exports = function(bytes, size) {
                 }
             }
             suspicious_bytes++;
+            // Read at least 32 bytes before making a decision
+            if (i > 32 && (suspicious_bytes * 100) / total_bytes > 10) {
+                return true;
+            } 
         }
     }
 
