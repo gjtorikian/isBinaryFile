@@ -1,6 +1,6 @@
 {
     "name": "isbinaryfile",
-    "version"         : "0.1.6",
+    "version"         : "0.1.7",
     "description": "Detects if a file is binary in Node.js. Similar to Perl's -B.",
     "main"       : "./lib/panino.js",
     "engines": {
@@ -14,5 +14,8 @@
         "type": "git",
         "url": "https://github.com/gjtorikian/isBinaryFile"
     },
-    "devDependencies" : { "mocha": "" }
+    "devDependencies" : { "mocha": "" },
+    "scripts": {
+        "test": "mocha tests/test.js"
+    }
 }
