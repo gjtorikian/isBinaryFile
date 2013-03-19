@@ -13,10 +13,6 @@ module.exports = function(bytes, size) {
     if (size == 0) 
         return false;
 
-    // NULL byte--it's binary!
-    if (/\0/.test(bytes))
-        return true;
-
     var suspicious_bytes = 0;
     var total_bytes = size > 512 ? 512 : size;
     
@@ -26,7 +22,10 @@ module.exports = function(bytes, size) {
     }
 
     for (var i = 0; i < total_bytes; i++) {  
-        if ((bytes[i] < 7 || bytes[i] > 14) && (bytes[i] < 32 || bytes[i] > 127)) {
+        if (bytes[i] == 0) { // NULL byte--it's binary!
+            return true;
+        }
+        else if ((bytes[i] < 7 || bytes[i] > 14) && (bytes[i] < 32 || bytes[i] > 127)) {
             // UTF-8 detection
             if (bytes[i] > 191 && bytes[i] < 224 && i + 1 < total_bytes) {
                 i++;
