@@ -1,6 +1,6 @@
 {
     "name": "isbinaryfile",
-    "version"         : "0.1.8",
+    "version"         : "0.1.9",
     "description": "Detects if a file is binary in Node.js. Similar to Perl's -B.",
     "main"       : "./lib/panino.js",
     "engines": {
