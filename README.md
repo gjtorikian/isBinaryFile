@@ -38,7 +38,7 @@ However, if you've already read and `stat()`-ed a file (for some other reason), 
 ```javascript
 fs.readFile(process.argv[2], function(err, data) {
 	fs.lstat(process.argv[2], function(err, stat) {
-		if (isBinaryFile(data, stat))
+		if (isBinaryFile(data, stat.size))
 			console.log("It is!")
 		else
 			console.log("No.")
