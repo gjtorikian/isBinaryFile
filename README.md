@@ -24,7 +24,7 @@ If you pass in one argument, this module assumes it's just the file path, and pe
 ```javascript
 var isBinaryFile = require("isbinaryfile");
 
-if (isBinaryFile(process.argv[2]))
+if (isBinaryFileSync(process.argv[2]))
 	console.log("It is!")
 else
 	console.log("No.")
@@ -38,13 +38,21 @@ However, if you've already read and `stat()`-ed a file (for some other reason), 
 ```javascript
 fs.readFile(process.argv[2], function(err, data) {
 	fs.lstat(process.argv[2], function(err, stat) {
-		if (isBinaryFile(data, stat.size))
+		if (isBinaryFileSync(data, stat.size))
 			console.log("It is!")
 		else
 			console.log("No.")
 	});
 });
 ```
+
+### Async
+
+Previous to version 1.0.0, this program always ran in sync mode. Now, there's an
+async option. The async option is a method called `isBinaryFile`. Its callback
+has two arguements: `err` and `isBinary`.
+
+The sync option is called `isBinaryFileSync`.
 
 ## Testing
 
