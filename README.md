@@ -22,7 +22,7 @@ npm install isBinaryFile
 If you pass in one argument, this module assumes it's just the file path, and performs the appropriate file read and stat functionality internally:
 
 ```javascript
-var isBinaryFile = require("isbinaryfile");
+var isBinaryFileSync = require("isbinaryfile").isBinaryFileSync;
 
 if (isBinaryFileSync(process.argv[2]))
 	console.log("It is!")
@@ -50,7 +50,7 @@ fs.readFile(process.argv[2], function(err, data) {
 
 Previous to version 1.0.0, this program always ran in sync mode. Now, there's an
 async option. The async option is a method called `isBinaryFile`. Its callback
-has two arguements: `err` and `isBinary`.
+has two arguments: `err` and `isBinary`.
 
 The sync option is called `isBinaryFileSync`.
 
