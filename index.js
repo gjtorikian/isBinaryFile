@@ -5,8 +5,8 @@ var max_bytes = 512;
 module.exports = function(bytes, size) {
   // Read the file with no encoding for raw buffer access.
   if (size === undefined) {
-    var file = bytes;
-    if (!fs.existsSync(file))
+    var file = bytes, existsSync == fs.existsSync || path.existsSync;
+    if (!existsSync(file))
        return false;
     var descriptor = fs.openSync(file, 'r');
     try {
