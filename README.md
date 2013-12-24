@@ -79,7 +79,7 @@ Install mocha on your machine:
 npm install mocha -g
 ```
 
-Then go into the _tests_ directory, and type `mocha test.js`.
+Then run `npm test`.
 
 # MIT License
 
