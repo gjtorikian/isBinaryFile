@@ -1,12 +1,7 @@
 isBinaryFile
 ============
 
-Detects if a file is binary in Node.js. Similar to [Perl's `-B`
-
-
-
-
-switch](http://stackoverflow.com/questions/899206/how-does-perl-know-a-file-is-binary),
+Detects if a file is binary in Node.js. Similar to [Perl's `-B` switch](http://stackoverflow.com/questions/899206/how-does-perl-know-a-file-is-binary),
 in that:
 
 * it reads the first few thousand bytes of a file
