@@ -17,7 +17,7 @@ Note: if the file doesn't exist or it is empty, this function returns `false`.
 ## Installation
 
 ```
-npm install isBinaryFile
+npm install isbinaryfile
 ```
 
 ## Usage
