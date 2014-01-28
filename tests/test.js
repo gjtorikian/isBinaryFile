@@ -22,10 +22,10 @@ describe('isBinaryFile', function() {
   });
 
   it('should not fail on a russian text', function() {
-    assert(!isBinaryFile("tests/fixtures/03_Руководство_по_эксплуатации.rst"));
+    assert(!isBinaryFile("tests/fixtures/03_russian_file.rst"));
 
-    var bytes = fs.readFileSync("tests/fixtures/03_Руководство_по_эксплуатации.rst");
-    var stat = fs.lstatSync("tests/fixtures/03_Руководство_по_эксплуатации.rst");
+    var bytes = fs.readFileSync("tests/fixtures/03_russian_file.rst");
+    var stat = fs.lstatSync("tests/fixtures/03_russian_file.rst");
     assert(!isBinaryFile(bytes, stat.size));
   });
 
