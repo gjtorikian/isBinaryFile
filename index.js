@@ -16,6 +16,7 @@ module.exports = function(bytes, size) {
       fs.closeSync(descriptor);
     }
   }
+  // async version has a function instead of a `size`
   else if (typeof size === "function") {
     var file = bytes, callback = size;
     var exists = fs.exists || path.exists;

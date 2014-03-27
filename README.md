@@ -27,9 +27,9 @@ performs the appropriate file read and stat functionality internally, as sync
 options:
 
 ``` javascript
-var isBinaryFileSync = require("isbinaryfile");
+var isBinaryFile = require("isbinaryfile");
 
-if (isBinaryFileSync(process.argv[2]))
+if (isBinaryFile(process.argv[2]))
   console.log("It is!")
 else
   console.log("No.")
@@ -44,7 +44,7 @@ time:
 ```javascript
 fs.readFile(process.argv[2], function(err, data) {
   fs.lstat(process.argv[2], function(err, stat) {
-    if (isBinaryFileSync(data, stat.size))
+    if (isBinaryFile(data, stat.size))
       console.log("It is!")
     else
       console.log("No.")
@@ -55,13 +55,13 @@ fs.readFile(process.argv[2], function(err, data) {
 ### Async
 
 Previous to version 2.0.0, this program always ran in sync mode. Now, there's
-an async option. Simply pass a function as your second parameter, and isBinaryFile
+an async option. Simply pass a function as your second parameter, and `isBinaryFile`
 will figure the rest out:
 
 ``` javascript
-var isBinaryFileSync = require("isbinaryfile");
+var isBinaryFile = require("isbinaryfile");
 
-isBinaryFileSync(process.argv[2], function(err, result) {
+isBinaryFile(process.argv[2], function(err, result) {
   if (err) return console.error(err);
 
   if (result)
