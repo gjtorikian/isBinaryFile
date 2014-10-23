@@ -53,7 +53,7 @@ describe('isBinaryFile', function() {
     assert(isBinaryFile(bytes, stat.size));
   });
 
-  it('should not fail on some lua file', function() {
+  it('should not fail on some UTF8 lua file', function() {
     assert(!isBinaryFile("tests/fixtures/07_no.lua"));
 
     var bytes = fs.readFileSync("tests/fixtures/07_no.lua");
