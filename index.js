@@ -59,15 +59,15 @@ function isBinaryCheck(bytes, size) {
     }
     else if ((bytes[i] < 7 || bytes[i] > 14) && (bytes[i] < 32 || bytes[i] > 127)) {
       // UTF-8 detection
-      if (bytes[i] > 191 && bytes[i] < 224 && i + 1 < total_bytes) {
+      if (bytes[i] > 193 && bytes[i] < 224 && i + 1 < total_bytes) {
           i++;
-          if (bytes[i] < 192) {
+          if (bytes[i] > 127 && bytes[i] < 192) {
               continue;
           }
       }
-      else if (bytes[i] > 223 && bytes[i] < 239 && i + 2 < total_bytes) {
+      else if (bytes[i] > 223 && bytes[i] < 240 && i + 2 < total_bytes) {
           i++;
-          if (bytes[i] < 192 && bytes[i + 1] < 192) {
+          if (bytes[i] > 127 && bytes[i] < 192 && bytes[i + 1] > 127 && bytes[i + 1] < 192) {
               i++;
               continue;
           }

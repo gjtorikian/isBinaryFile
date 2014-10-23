@@ -53,6 +53,14 @@ describe('isBinaryFile', function() {
     assert(isBinaryFile(bytes, stat.size));
   });
 
+  it('should not fail on some UTF8 lua file', function() {
+    assert(!isBinaryFile("tests/fixtures/07_no.lua"));
+
+    var bytes = fs.readFileSync("tests/fixtures/07_no.lua");
+    var stat = fs.lstatSync("tests/fixtures/07_no.lua");
+    assert(!isBinaryFile(bytes, stat.size));
+  });
+
   it('should not fail with async', function(done) {
     assert.doesNotThrow(function() {
       isBinaryFile("tests/fixtures/06_trunks.gif", function(err, result) {
