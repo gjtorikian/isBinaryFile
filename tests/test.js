@@ -61,6 +61,18 @@ describe('isBinaryFile', function() {
     assert(!isBinaryFile(bytes, stat.size));
   });
 
+  it('should fail a directory', function() {
+    assert(!isBinaryFile("tests/fixtures/08_dir"));
+  });
+
+  it('should fail a directory with async', function(done) {
+    isBinaryFile("tests/fixtures/08_dir", function(err, result) {
+      assert(!err);
+      assert(!result);
+      done();
+    });
+  });
+
   it('should not fail with async', function(done) {
     assert.doesNotThrow(function() {
       isBinaryFile("tests/fixtures/06_trunks.gif", function(err, result) {

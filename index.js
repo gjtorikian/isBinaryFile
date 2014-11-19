@@ -5,9 +5,12 @@ var max_bytes = 512;
 module.exports = function(bytes, size) {
   // Read the file with no encoding for raw buffer access.
   if (size === undefined) {
-    var file = bytes, existsSync = fs.existsSync || path.existsSync;
-    if (!existsSync(file))
-       return false;
+    var file = bytes;
+    try {
+      if(!fs.statSync(file).isFile()) return false;
+    } catch (err) {
+      // otherwise continue on
+    }
     var descriptor = fs.openSync(file, 'r');
     try {
       bytes = new Buffer(max_bytes);
@@ -19,9 +22,8 @@ module.exports = function(bytes, size) {
   // async version has a function instead of a `size`
   else if (typeof size === "function") {
     var file = bytes, callback = size;
-    var exists = fs.exists || path.exists;
-    exists(file, function (exists) {
-      if (!exists) return callback(null, false);
+    fs.stat(file, function(err, stat) {
+      if (err || !stat.isFile()) return callback(null, false);
 
       fs.open(file, 'r', function(err, descriptor){
           if (err) return callback(err);
