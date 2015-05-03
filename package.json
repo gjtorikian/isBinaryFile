@@ -1,21 +1,25 @@
 {
-    "name": "isbinaryfile",
-    "version"         : "2.0.4",
-    "description": "Detects if a file is binary in Node.js. Similar to Perl's -B.",
-    "main"       : "./lib/panino.js",
-    "engines": {
-        "node": ">=0.6.0"
-    },
-    "maintainers": [{
-        "name": "Garen J. Torikian",
-        "email": "gjtorikian@gmail.com"
-    }],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/gjtorikian/isBinaryFile"
-    },
-    "devDependencies" : { "mocha": "" },
-    "scripts": {
-        "test": "mocha tests/test.js"
+  "name": "isbinaryfile",
+  "description": "Detects if a file is binary in Node.js. Similar to Perl's -B.",
+  "version": "2.0.4",
+  "devDependencies": {
+    "mocha": ""
+  },
+  "engines": {
+    "node": ">=0.6.0"
+  },
+  "main": "./lib/panino.js",
+  "maintainers": [
+    {
+      "name": "Garen J. Torikian",
+      "email": "gjtorikian@gmail.com"
     }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gjtorikian/isBinaryFile"
+  },
+  "scripts": {
+    "test": "mocha tests/test.js"
+  }
 }
