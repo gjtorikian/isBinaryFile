@@ -21,6 +21,6 @@
     "url": "https://github.com/gjtorikian/isBinaryFile"
   },
   "scripts": {
-    "test": "mocha tests/test.js"
+    "test": "mocha"
   }
 }
