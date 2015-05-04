@@ -8,6 +8,7 @@
   "engines": {
     "node": ">=0.6.0"
   },
+  "license": "MIT",
   "main": "./index.js",
   "maintainers": [
     {
