@@ -3,7 +3,7 @@
   "description": "Detects if a file is binary in Node.js. Similar to Perl's -B.",
   "version": "2.0.4",
   "devDependencies": {
-    "mocha": ""
+    "mocha": "^2.2.4"
   },
   "engines": {
     "node": ">=0.6.0"
