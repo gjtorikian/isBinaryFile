@@ -86,4 +86,12 @@ describe('isBinaryFile', function() {
     var stat = fs.lstatSync(path.join(FIXTURE_PATH, "pdf.pdf"));
     assert(isBinaryFile(bytes, stat.size));
   });
+
+  it.only('should pass non-UTF8 files', function() {
+    encoding_dir = path.join(FIXTURE_PATH, "encodings")
+    files = fs.readdirSync(encoding_dir);
+    files.forEach(function(file) {
+      assert(!isBinaryFile(path.join(encoding_dir, file)));
+    });
+  });
 });
