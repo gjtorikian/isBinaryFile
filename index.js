@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require("path");
-var max_bytes = 512;
+var MAX_BYTES = 512;
 
 module.exports = function(bytes, size) {
   var file = bytes;
@@ -13,7 +13,7 @@ module.exports = function(bytes, size) {
     }
     var descriptor = fs.openSync(file, 'r');
     try {
-      bytes = new Buffer(max_bytes);
+      bytes = new Buffer(MAX_BYTES);
       size = fs.readSync(descriptor, bytes, 0, bytes.length, 0);
     } finally {
       fs.closeSync(descriptor);
@@ -27,7 +27,7 @@ module.exports = function(bytes, size) {
 
       fs.open(file, 'r', function(err, descriptor){
           if (err) return callback(err);
-          var bytes = new Buffer(max_bytes);
+          var bytes = new Buffer(MAX_BYTES);
           // Read the file with no encoding for raw buffer access.
           fs.read(descriptor, bytes, 0, bytes.length, 0, function(err, size, bytes){
             fs.close(descriptor, function(err2){
@@ -48,7 +48,7 @@ function isBinaryCheck(bytes, size) {
     return false;
 
   var suspicious_bytes = 0;
-  var total_bytes = Math.min(size, max_bytes);
+  var total_bytes = Math.min(size, MAX_BYTES);
 
   if (size >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF) {
     // UTF-8 BOM. This isn't binary.

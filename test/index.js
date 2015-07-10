@@ -3,7 +3,7 @@ var fs = require("fs");
 var path = require("path");
 var isBinaryFile = require("../index");
 
-FIXTURE_PATH = "./test/fixtures";
+var FIXTURE_PATH = "./test/fixtures";
 
 describe('isBinaryFile', function() {
   it('should fail on a binary program', function() {
