@@ -50,14 +50,39 @@ function isBinaryCheck(bytes, size) {
   var suspicious_bytes = 0;
   var total_bytes = Math.min(size, MAX_BYTES);
 
+  // UTF-8 BOM
   if (size >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF) {
-    // UTF-8 BOM. This isn't binary.
     return false;
   }
 
+  // UTF-32 BOM
+  if (size >= 4 && bytes[0] == 0x00 && bytes[1] == 0x00 && bytes[2] == 0xFE && bytes[3] == 0xFF) {
+    return false;
+  }
+
+  // UTF-32 LE BOM
+  if (size >= 4 && bytes[0] == 0xFF && bytes[1] == 0xFE && bytes[2] == 0x00 && bytes[3] == 0x00) {
+    return false;
+  }
+
+  // GB BOM
+  if (size >= 4 && bytes[0] == 0x84 && bytes[1] == 0x31 && bytes[2] == 0x95 && bytes[3] == 0x33) {
+    return false;
+  }
+
+  // PDF
   if (total_bytes >= 4 && bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] ==  0x46) {
-      /* PDF. This is binary. */
-      return 1;
+    return true;
+  }
+
+  // UTF-16 BE BOM
+  if (size >= 2 && bytes[0] == 0xFE && bytes[1] == 0xFF) {
+    return false;
+  }
+
+  // UTF-16 LE BOM
+  if (size >= 2 && bytes[0] == 0xFF && bytes[1] == 0xFE) {
+    return false;
   }
 
   for (var i = 0; i < total_bytes; i++) {
