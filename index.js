@@ -55,6 +55,11 @@ function isBinaryCheck(bytes, size) {
     return false;
   }
 
+  if (total_bytes >= 4 && bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] ==  0x46) {
+      /* PDF. This is binary. */
+      return 1;
+  }
+
   for (var i = 0; i < total_bytes; i++) {
     if (bytes[i] === 0) { // NULL byte--it's binary!
       return true;

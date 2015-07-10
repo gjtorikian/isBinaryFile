@@ -30,14 +30,6 @@ describe('isBinaryFile', function() {
     assert(!isBinaryFile(bytes, stat.size));
   });
 
-  it('should not fail on a PDF', function() {
-    assert(isBinaryFile(path.join(FIXTURE_PATH, "HelloWorld.pdf")));
-
-    var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "HelloWorld.pdf"));
-    var stat = fs.lstatSync(path.join(FIXTURE_PATH, "HelloWorld.pdf"));
-    assert(isBinaryFile(bytes, stat.size));
-  });
-
   it('should not fail on a zero-byte file', function() {
     assert(!isBinaryFile(path.join(FIXTURE_PATH, "null_file.gif")));
 
@@ -85,5 +77,13 @@ describe('isBinaryFile', function() {
         done();
       });
     });
+  });
+
+  it('should fail on a PDF', function() {
+    assert(isBinaryFile(path.join(FIXTURE_PATH, "pdf.pdf")));
+
+    var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "pdf.pdf"));
+    var stat = fs.lstatSync(path.join(FIXTURE_PATH, "pdf.pdf"));
+    assert(isBinaryFile(bytes, stat.size));
   });
 });
