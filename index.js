@@ -56,12 +56,12 @@ function isBinaryCheck(bytes, size) {
   }
 
   // UTF-32 BOM
-  if (size >= 4 && bytes[0] == 0x00 && bytes[1] == 0x00 && bytes[2] == 0xFE && bytes[3] == 0xFF) {
+  if (size >= 4 && bytes[0] === 0x00 && bytes[1] === 0x00 && bytes[2] == 0xFE && bytes[3] == 0xFF) {
     return false;
   }
 
   // UTF-32 LE BOM
-  if (size >= 4 && bytes[0] == 0xFF && bytes[1] == 0xFE && bytes[2] == 0x00 && bytes[3] == 0x00) {
+  if (size >= 4 && bytes[0] == 0xFF && bytes[1] == 0xFE && bytes[2] === 0x00 && bytes[3] === 0x00) {
     return false;
   }
 
@@ -94,20 +94,20 @@ function isBinaryCheck(bytes, size) {
       if (bytes[i] > 193 && bytes[i] < 224 && i + 1 < total_bytes) {
           i++;
           if (bytes[i] > 127 && bytes[i] < 192) {
-              continue;
+            continue;
           }
       }
       else if (bytes[i] > 223 && bytes[i] < 240 && i + 2 < total_bytes) {
           i++;
           if (bytes[i] > 127 && bytes[i] < 192 && bytes[i + 1] > 127 && bytes[i + 1] < 192) {
-              i++;
-              continue;
+            i++;
+            continue;
           }
       }
       suspicious_bytes++;
       // Read at least 32 bytes before making a decision
       if (i > 32 && (suspicious_bytes * 100) / total_bytes > 10) {
-          return true;
+        return true;
       }
     }
   }
