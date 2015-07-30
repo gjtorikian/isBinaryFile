@@ -2,45 +2,30 @@ var fs = require('fs');
 var path = require("path");
 var MAX_BYTES = 512;
 
-module.exports = function(bytes, size) {
-  var file = bytes;
-  // Read the file with no encoding for raw buffer access.
-  if (size === undefined) {
-    try {
-      if(!fs.statSync(file).isFile()) return false;
-    } catch (err) {
-      // otherwise continue on
-    }
-    var descriptor = fs.openSync(file, 'r');
-    try {
-      bytes = new Buffer(MAX_BYTES);
-      size = fs.readSync(descriptor, bytes, 0, bytes.length, 0);
-    } finally {
-      fs.closeSync(descriptor);
-    }
-  }
-  // async version has a function instead of a `size`
-  else if (typeof size === "function") {
-    callback = size;
-    fs.stat(file, function(err, stat) {
-      if (err || !stat.isFile()) return callback(null, false);
+module.exports = function(bytes, size, cb) {
+  // Only two args
+  if (cb === undefined) {
+    var file = bytes;
+    cb = size;
 
-      fs.open(file, 'r', function(err, descriptor){
-          if (err) return callback(err);
-          var bytes = new Buffer(MAX_BYTES);
+    fs.stat(file, function(err, stat) {
+      if (err || !stat.isFile()) return cb(err, false);
+
+      fs.open(file, 'r', function(r_err, descriptor){
+          if (r_err) return cb(r_err);
+          bytes = new Buffer(MAX_BYTES);
           // Read the file with no encoding for raw buffer access.
           fs.read(descriptor, bytes, 0, bytes.length, 0, function(err, size, bytes){
-            fs.close(descriptor, function(err2){
-                if (err || err2)
-                    return callback(err || err2);
-                return callback(null, isBinaryCheck(bytes, size));
+            fs.close(descriptor, function(c_err){
+                if (c_err) return cb(c_err, false);
+                return cb(null, isBinaryCheck(bytes, size));
             });
           });
       });
     });
   }
-
-  return isBinaryCheck(bytes, size);
+  else
+    return cb(null, isBinaryCheck(bytes, size));
 };
 
 function isBinaryCheck(bytes, size) {
@@ -119,4 +104,25 @@ function isBinaryCheck(bytes, size) {
   return false;
 }
 
-module.exports.isBinaryCheck = isBinaryCheck;
+module.exports.sync = function(bytes, size) {
+  // Only one arg
+  if (size === undefined) {
+    var file = bytes;
+    try {
+      if(!fs.statSync(file).isFile()) return false;
+    } catch (err) {
+      // otherwise continue on
+    }
+    var descriptor = fs.openSync(file, 'r');
+    try {
+      // Read the file with no encoding for raw buffer access.
+      bytes = new Buffer(MAX_BYTES);
+      size = fs.readSync(descriptor, bytes, 0, bytes.length, 0);
+    } finally {
+      fs.closeSync(descriptor);
+    }
+    return isBinaryCheck(bytes, size);
+  }
+  else
+    return isBinaryCheck(bytes, size);
+}
