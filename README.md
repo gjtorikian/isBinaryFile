@@ -32,7 +32,7 @@ npm install isbinaryfile
 * `filepath`, a `string` indicating the path to the file.
 * `size`, an optional `number` indicating the file size.
 
-Returns a `boolean` of `true` or `false`, depending on if the file is binary/
+Returns a `boolean` of `true` or `false`, depending on if the file is binary.
 
 ## Examples
 
