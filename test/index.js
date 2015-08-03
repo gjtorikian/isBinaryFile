@@ -69,48 +69,48 @@ describe('isBinaryFile.sync()', function() {
     assert(isBinaryFile.sync(path.join(FIXTURE_PATH, "grep")));
 
     var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "grep"));
-    var stat = fs.lstatSync(path.join(FIXTURE_PATH, "grep"));
-    assert(isBinaryFile.sync(bytes, stat.size));
+    var size = fs.lstatSync(path.join(FIXTURE_PATH, "grep")).size;
+    assert(isBinaryFile.sync(bytes, size));
   });
 
   it('should return false on an extensionless text script', function() {
     assert(!isBinaryFile.sync(path.join(FIXTURE_PATH, "perl_script")));
 
     var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "perl_script"));
-    var stat = fs.lstatSync(path.join(FIXTURE_PATH, "perl_script"));
-    assert(!isBinaryFile.sync(bytes, stat.size));
+    var size = fs.lstatSync(path.join(FIXTURE_PATH, "perl_script")).size;
+    assert(!isBinaryFile.sync(bytes, size));
   });
 
   it('should return false on a russian text', function() {
     assert(!isBinaryFile.sync(path.join(FIXTURE_PATH, "russian_file.rst")));
 
     var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "russian_file.rst"));
-    var stat = fs.lstatSync(path.join(FIXTURE_PATH, "russian_file.rst"));
-    assert(!isBinaryFile.sync(bytes, stat.size));
+    var size = fs.lstatSync(path.join(FIXTURE_PATH, "russian_file.rst")).size;
+    assert(!isBinaryFile.sync(bytes, size));
   });
 
   it('should return false on a zero-byte image file', function() {
     assert(!isBinaryFile.sync(path.join(FIXTURE_PATH, "null_file.gif")));
 
     var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "null_file.gif"));
-    var stat = fs.lstatSync(path.join(FIXTURE_PATH, "null_file.gif"));
-    assert(!isBinaryFile.sync(bytes, stat.size));
+    var size = fs.lstatSync(path.join(FIXTURE_PATH, "null_file.gif")).size;
+    assert(!isBinaryFile.sync(bytes, size));
   });
 
   it('should return true on a gif', function() {
     assert(isBinaryFile.sync(path.join(FIXTURE_PATH, "trunks.gif")));
 
     var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "trunks.gif"));
-    var stat = fs.lstatSync(path.join(FIXTURE_PATH, "trunks.gif"));
-    assert(isBinaryFile.sync(bytes, stat.size));
+    var size = fs.lstatSync(path.join(FIXTURE_PATH, "trunks.gif")).size;
+    assert(isBinaryFile.sync(bytes, size));
   });
 
   it('should return false on some UTF8 lua file', function() {
     assert(!isBinaryFile.sync(path.join(FIXTURE_PATH, "no.lua")));
 
     var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "no.lua"));
-    var stat = fs.lstatSync(path.join(FIXTURE_PATH, "no.lua"));
-    assert(!isBinaryFile.sync(bytes, stat.size));
+    var size = fs.lstatSync(path.join(FIXTURE_PATH, "no.lua")).size;
+    assert(!isBinaryFile.sync(bytes, size));
   });
 
   it('should return false on a directory', function() {
@@ -121,8 +121,8 @@ describe('isBinaryFile.sync()', function() {
     assert(isBinaryFile.sync(path.join(FIXTURE_PATH, "pdf.pdf")));
 
     var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "pdf.pdf"));
-    var stat = fs.lstatSync(path.join(FIXTURE_PATH, "pdf.pdf"));
-    assert(isBinaryFile.sync(bytes, stat.size));
+    var size = fs.lstatSync(path.join(FIXTURE_PATH, "pdf.pdf")).size;
+    assert(isBinaryFile.sync(bytes, size));
   });
 
   it('should return false for non-UTF8 files', function() {
