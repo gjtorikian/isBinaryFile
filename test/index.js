@@ -13,7 +13,27 @@ describe('isBinaryFile()', function() {
     });
   });
 
+  it('should return true on a binary program, accepting bytes & size', function(cb) {
+    var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "grep"));
+    var size = fs.lstatSync(path.join(FIXTURE_PATH, "grep")).size;
+
+    isBinaryFile(bytes, size, function (err, result) {
+      assert(result);
+      cb();
+    });
+  });
+
   it('should return false on an extensionless script', function(cb) {
+    var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "perl_script"));
+    var size = fs.lstatSync(path.join(FIXTURE_PATH, "perl_script")).size;
+
+    isBinaryFile(bytes, size, function (err, result) {
+      assert(!result);
+      cb();
+    });
+  });
+
+  it('should return false on an extensionless script, accepting bytes & size', function(cb) {
     isBinaryFile(path.join(FIXTURE_PATH, "perl_script"), function (err, result) {
       assert(!result);
       cb();
