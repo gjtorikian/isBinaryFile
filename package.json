@@ -1,9 +1,13 @@
 {
   "name": "isbinaryfile",
   "description": "Detects if a file is binary in Node.js. Similar to Perl's -B.",
-  "version": "2.0.4",
+  "version": "3.0.0",
   "devDependencies": {
-    "mocha": "^2.2.4"
+    "mocha": "^2.2.4",
+    "grunt": "~0.4.1",
+    "grunt-release": "~0.6.0",
+    "grunt-exec": "0.4.3",
+    "grunt-cli": "~0.1.13"
   },
   "engines": {
     "node": ">=0.6.0"
