@@ -25,7 +25,7 @@ npm install isbinaryfile
   - `result`, a `boolean` of `true` or `false`, depending on if the file is binary
 
 
-### isBinaryFile(bytes, size], callback)
+### isBinaryFile(bytes, size, callback)
 
 * `bytes`, an `number` indicating the size of the file.
 * `size`, an optional `number` indicating the file size.
@@ -39,7 +39,7 @@ npm install isbinaryfile
 * `filepath`, a `string` indicating the path to the file.
 
 
-### isBinaryFile.sync(bytes, size])
+### isBinaryFile.sync(bytes, size)
 
 * `bytes`, an `number` indicating the size of the file.
 * `size`, an `number` indicating the file size.
