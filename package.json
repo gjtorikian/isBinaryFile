@@ -12,6 +12,9 @@
   "engines": {
     "node": ">=0.6.0"
   },
+  "files": [
+    "index.js"
+  ],
   "license": "MIT",
   "main": "./index.js",
   "maintainers": [
