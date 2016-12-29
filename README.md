@@ -27,7 +27,7 @@ npm install isbinaryfile
 
 ### isBinaryFile(bytes, size, callback)
 
-* `bytes`, an `number` indicating the size of the file.
+* `bytes`, a `Buffer` of the file's contents.
 * `size`, an optional `number` indicating the file size.
 * `callback`, a `function` for the callback. It has two arguments:
   - `err`, the typical Node.js error argument
@@ -41,7 +41,7 @@ npm install isbinaryfile
 
 ### isBinaryFile.sync(bytes, size)
 
-* `bytes`, an `number` indicating the size of the file.
+* `bytes`, a `Buffer` of the file's contents.
 * `size`, an `number` indicating the file size.
 
 
@@ -65,10 +65,6 @@ fs.readFile(process.argv[2], function(err, data) {
       console.log("No.")
   });
 });
-
-isBinaryFile.sync(process.argv[2]); // true or false
-var stat = fs.lstatSync(process.argv[2]);
-isBinaryFile.sync(process.argv[2], stat.size); // true or false
 ```
 
 ## Testing
