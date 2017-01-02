@@ -1,7 +1,7 @@
 {
   "name": "isbinaryfile",
   "description": "Detects if a file is binary in Node.js. Similar to Perl's -B.",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "devDependencies": {
     "mocha": "^2.2.4",
     "grunt": "~0.4.1",
