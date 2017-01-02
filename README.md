@@ -52,19 +52,25 @@ Returns a `boolean` of `true` or `false`, depending on if the file is binary.
 ```javascript
 var isBinaryFile = require("isbinaryfile");
 
-if (isBinaryFile(process.argv[2]))
-  console.log("It is!")
-else
-  console.log("No.")
-
-fs.readFile(process.argv[2], function(err, data) {
-  fs.lstat(process.argv[2], function(err, stat) {
-    if (isBinaryFile(data, stat.size))
-      console.log("It is!")
-    else
-      console.log("No.")
+fs.readFile("some_file", function(err, data) {
+  fs.lstat("some_file", function(err, stat) {
+    isBinaryFile(data, stat.size, function (err, result) {
+      if (!err) {
+        if (result) {
+          console.log("It is!")
+        }
+        else {
+          console.log("No.")
+        }
+      }
+    });
   });
 });
+
+isBinaryFile.sync("some_file"); // true or false
+var bytes = fs.readFileSync(("some_file"));
+var size = fs.lstatSync(("some_file").size;
+isBinaryFile.sync(bytes, size); // true or false
 ```
 
 ## Testing

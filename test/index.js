@@ -82,6 +82,13 @@ describe('isBinaryFile()', function() {
       cb();
     });
   });
+
+  it('should return true on a tricky PDF that needs a header check', function(cb) {
+    isBinaryFile(path.join(FIXTURE_PATH, "test.pdf"), function (err, result) {
+      assert(result);
+      cb();
+    });
+  });
 });
 
 describe('isBinaryFile.sync()', function() {
@@ -142,6 +149,14 @@ describe('isBinaryFile.sync()', function() {
 
     var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "pdf.pdf"));
     var size = fs.lstatSync(path.join(FIXTURE_PATH, "pdf.pdf")).size;
+    assert(isBinaryFile.sync(bytes, size));
+  });
+
+  it('should return true on a tricky PDF that needs a header check', function() {
+    assert(isBinaryFile.sync(path.join(FIXTURE_PATH, "test.pdf")));
+
+    var bytes = fs.readFileSync(path.join(FIXTURE_PATH, "test.pdf"));
+    var size = fs.lstatSync(path.join(FIXTURE_PATH, "test.pdf")).size;
     assert(isBinaryFile.sync(bytes, size));
   });
 
