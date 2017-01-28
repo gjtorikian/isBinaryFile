@@ -28,7 +28,7 @@ module.exports = function(bytes, size, cb) {
     return cb(null, isBinaryCheck(bytes, size));
 };
 
-function isBinaryCheck(bytes, size) {
+module.exports.isBinaryCheck = function isBinaryCheck(bytes, size) {
   if (size === 0)
     return false;
 
