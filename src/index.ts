@@ -7,9 +7,9 @@ const closeAsync = promisify(fs.close);
 
 const MAX_BYTES = 512
 
-export async function isBinaryFile(type: string | Buffer, size?: number): Promise<boolean> {
-  if (isString(type)) {
-    const filepath = type;
+export async function isBinaryFile(file: string | Buffer, size?: number): Promise<boolean> {
+  if (isString(file)) {
+    const filepath = file;
 
     const stat = await statAsync(filepath);
 
@@ -27,47 +27,43 @@ export async function isBinaryFile(type: string | Buffer, size?: number): Promis
       fs.read(fileDescriptor, allocBuffer, 0, MAX_BYTES, 0, (err, bytesRead, _) => {
         closeAsync(fileDescriptor);
         if (err) { reject(err) }
-        else { fulfill(isBinaryCheck(bytesRead, allocBuffer)); }
+        else { fulfill(isBinaryCheck(allocBuffer, bytesRead)); }
       });
     });
   }
   else {
     if (size === undefined) {
-      throw new Error(`You provided a Buffer to check, but not its size!`);
+      size = file.length;
     }
-    const bytes = type;
-    return isBinaryCheck(size!, bytes);
+    return isBinaryCheck(file, size);
   }
 }
 
-export function isBinaryFileSync(type: string | Buffer, size?: number): boolean {
-  if (isString(type)) {
-    const filepath = type;
-
-    const stat = fs.statSync(filepath);
+export function isBinaryFileSync(file: string | Buffer, size?: number): boolean {
+  if (isString(file)) {
+    const stat = fs.statSync(file);
 
     if (!stat.isFile()) {
       throw new Error(`Path provided was not a file!`);
     }
 
-    const fileDescriptor = fs.openSync(filepath, 'r');
+    const fileDescriptor = fs.openSync(file, 'r');
 
     const allocBuffer = Buffer.alloc(MAX_BYTES);
 
     const bytesRead = fs.readSync(fileDescriptor, allocBuffer, 0, MAX_BYTES, 0);
     fs.closeSync(fileDescriptor);
 
-    return isBinaryCheck(bytesRead, allocBuffer);
+    return isBinaryCheck(allocBuffer, bytesRead);
   } else {
     if (size === undefined) {
-      throw new Error(`You provided a Buffer to check, but not its size!`);
+      size = file.length;
     }
-    const bytes = type;
-    return isBinaryCheck(size!, bytes);
+    return isBinaryCheck(file, size);
   }
 }
 
-function isBinaryCheck(bytesRead: number, fileBuffer: Buffer): boolean {
+function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
   // empty file. no clue what it is.
   if (bytesRead === 0) {
     return false;

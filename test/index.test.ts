@@ -7,10 +7,14 @@ import * as path from 'path';
 const FIXTURE_PATH = "./test/fixtures";
 
 describe('async', () => {
-  it("should require size if bytes are given", async () => {
+  it("does not require size if bytes are given", async () => {
     const bytes = fs.readFileSync(path.join(FIXTURE_PATH, "grep"));
 
-    await expect(isBinaryFile(bytes)).rejects.toThrow("You provided a Buffer to check, but not its size!");
+    expect.assertions(1);
+
+    const result = await isBinaryFile(bytes);
+
+    expect(result).toBe(true);
   });
 
   it("should return true on a binary program, accepting path", async () => {
@@ -137,11 +141,9 @@ describe('sync', () => {
   it("should require size if bytes are given", () => {
     const bytes = fs.readFileSync(path.join(FIXTURE_PATH, "grep"));
 
-    try {
-      isBinaryFileSync(bytes)
-    } catch (e) {
-      expect(e.message).toBe("You provided a Buffer to check, but not its size!")
-    }
+    const result = isBinaryFileSync(bytes);
+
+    expect(result).toBe(true);
   });
 
   it("should return true on a binary program, accepting path", () => {
