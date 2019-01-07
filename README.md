@@ -46,7 +46,7 @@ const isBinaryFile = require("isbinaryfile").isBinaryFile;
 const data = await fs.readFile("some_file");
 const stat = await fs.lstat("some_file");
 
-isBinaryFile(data, stat.size.then((result) => {
+isBinaryFile(data, stat.size).then((result) => {
   if (result) {
     console.log("It is binary!")
   }
