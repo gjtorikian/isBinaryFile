@@ -7,7 +7,7 @@ Detects if a file is binary in Node.js. Similar to [Perl's `-B` switch](http://s
 
 Much of the logic is pretty much ported from [ag](https://github.com/ggreer/the_silver_searcher).
 
-Note: if the file doesn't exist, is a directory, or is empty, the function returns `false`.
+Note: if the file doesn't exist or is a directory, an error is thrown.
 
 ## Installation
 
@@ -75,4 +75,4 @@ isBinaryFile.sync(bytes, size); // true or false
 
 ## Testing
 
-Run `npm install` to install `mocha`, then run `npm test`.
+Run `npm install`, then run `npm test`.
