@@ -40,11 +40,15 @@ Returns `Promise<boolean>` (or just `boolean` for `*Sync`). `true` if the file i
 
 ### Examples
 
+Here's an arbitrary usage:
+
 ```javascript
 const isBinaryFile = require("isbinaryfile").isBinaryFile;
+const fs = require("fs");
 
-const data = await fs.readFile("some_file");
-const stat = await fs.lstat("some_file");
+const filename = "fixtures/pdf.pdf";
+const data = fs.readFileSync(filename);
+const stat = fs.lstatSync(filename);
 
 isBinaryFile(data, stat.size).then((result) => {
   if (result) {
@@ -53,11 +57,12 @@ isBinaryFile(data, stat.size).then((result) => {
   else {
     console.log("No it is not.")
   }
-}));
+});
 
-let bytes = fs.readFileSync(("some_file"));
-let size = fs.lstatSync(("some_file").size;
-isBinaryFile.sync(bytes, size); // true or false
+const isBinaryFileSync = require("isbinaryfile").isBinaryFileSync;
+const bytes = fs.readFileSync(filename);
+const size = fs.lstatSync(filename).size;
+console.log(isBinaryFileSync(bytes, size)); // true or false
 ```
 
 ## Testing
