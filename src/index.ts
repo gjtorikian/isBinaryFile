@@ -9,15 +9,13 @@ const MAX_BYTES = 512
 
 export async function isBinaryFile(file: string | Buffer, size?: number): Promise<boolean> {
   if (isString(file)) {
-    const filepath = file;
-
-    const stat = await statAsync(filepath);
+    const stat = await statAsync(file);
 
     if (!stat.isFile()) {
       throw new Error(`Path provided was not a file!`);
     }
 
-    const fileDescriptor = await openAsync(filepath, 'r');
+    const fileDescriptor = await openAsync(file, 'r');
 
     const allocBuffer = Buffer.alloc(MAX_BYTES);
 
