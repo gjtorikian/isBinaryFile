@@ -2,6 +2,21 @@
   "name": "isbinaryfile",
   "description": "Detects if a file is binary in Node.js. Similar to Perl's -B.",
   "version": "4.0.0-rc1",
+  "keywords": [
+    "text",
+    "binary",
+    "encoding",
+    "istext",
+    "is text",
+    "isbinary",
+    "is binary",
+    "is text or binary",
+    "is text or binary file",
+    "isbinaryfile",
+    "is binary file",
+    "istextfile",
+    "is text file"
+  ],
   "dependencies": {},
   "devDependencies": {
     "@types/jest": "^23.3.12",
