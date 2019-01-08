@@ -11,9 +11,7 @@ export async function isBinaryFile(file: string | Buffer, size?: number): Promis
   if (isString(file)) {
     const stat = await statAsync(file);
 
-    if (!stat.isFile()) {
-      throw new Error(`Path provided was not a file!`);
-    }
+    isStatFile(stat);
 
     const fileDescriptor = await openAsync(file, 'r');
 
@@ -30,9 +28,7 @@ export async function isBinaryFile(file: string | Buffer, size?: number): Promis
     });
   }
   else {
-    if (size === undefined) {
-      size = file.length;
-    }
+    if (size === undefined) { size = file.length; }
     return isBinaryCheck(file, size);
   }
 }
@@ -41,9 +37,7 @@ export function isBinaryFileSync(file: string | Buffer, size?: number): boolean 
   if (isString(file)) {
     const stat = fs.statSync(file);
 
-    if (!stat.isFile()) {
-      throw new Error(`Path provided was not a file!`);
-    }
+    isStatFile(stat);
 
     const fileDescriptor = fs.openSync(file, 'r');
 
@@ -53,19 +47,16 @@ export function isBinaryFileSync(file: string | Buffer, size?: number): boolean 
     fs.closeSync(fileDescriptor);
 
     return isBinaryCheck(allocBuffer, bytesRead);
-  } else {
-    if (size === undefined) {
-      size = file.length;
-    }
+  }
+  else {
+    if (size === undefined) { size = file.length; }
     return isBinaryCheck(file, size);
   }
 }
 
 function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
   // empty file. no clue what it is.
-  if (bytesRead === 0) {
-    return false;
-  }
+  if (bytesRead === 0) { return false; }
 
   let suspiciousBytes = 0;
   const totalBytes = Math.min(bytesRead, MAX_BYTES);
@@ -109,20 +100,23 @@ function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
     if (fileBuffer[i] === 0) {
       // NULL byte--it's binary!
       return true;
-    } else if ((fileBuffer[i] < 7 || fileBuffer[i] > 14) && (fileBuffer[i] < 32 || fileBuffer[i] > 127)) {
+    }
+    else if ((fileBuffer[i] < 7 || fileBuffer[i] > 14) && (fileBuffer[i] < 32 || fileBuffer[i] > 127)) {
       // UTF-8 detection
       if (fileBuffer[i] > 193 && fileBuffer[i] < 224 && i + 1 < totalBytes) {
         i++;
         if (fileBuffer[i] > 127 && fileBuffer[i] < 192) {
           continue;
         }
-      } else if (fileBuffer[i] > 223 && fileBuffer[i] < 240 && i + 2 < totalBytes) {
+      }
+      else if (fileBuffer[i] > 223 && fileBuffer[i] < 240 && i + 2 < totalBytes) {
         i++;
         if (fileBuffer[i] > 127 && fileBuffer[i] < 192 && fileBuffer[i + 1] > 127 && fileBuffer[i + 1] < 192) {
           i++;
           continue;
         }
       }
+
       suspiciousBytes++;
       // Read at least 32 fileBuffer before making a decision
       if (i > 32 && (suspiciousBytes * 100) / totalBytes > 10) {
@@ -140,4 +134,8 @@ function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
 
 function isString(x: any): x is string {
   return typeof x === "string";
+}
+
+function isStatFile(stat: fs.Stats): void {
+  if (!stat.isFile()) { throw new Error(`Path provided was not a file!`); }
 }
