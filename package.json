@@ -44,6 +44,7 @@
       "email": "gjtorikian@gmail.com"
     }
   ],
+  "funding": "https://github.com/sponsors/gjtorikian/",
   "repository": {
     "type": "git",
     "url": "https://github.com/gjtorikian/isBinaryFile"
