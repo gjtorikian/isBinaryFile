@@ -135,6 +135,7 @@ describe('async', () => {
 
     expect(result).toBe(true);
   });
+
   it("should return false on a protobuf.proto", async () => {
     const file = path.join(FIXTURE_PATH, "protobuf.proto");
 
@@ -144,6 +145,7 @@ describe('async', () => {
 
     expect(result).toBe(false);
   });
+
   it("should return false on a protobuf.proto.txt", async () => {
     const file = path.join(FIXTURE_PATH, "protobuf.proto.txt");
 
@@ -153,6 +155,7 @@ describe('async', () => {
 
     expect(result).toBe(false);
   });
+
   it("should return true on a protobuf.proto.bin", async () => {
     const file = path.join(FIXTURE_PATH, "protobuf.proto.bin");
 
