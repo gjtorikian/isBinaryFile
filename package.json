@@ -29,7 +29,7 @@
     "typescript": "^3.9.9"
   },
   "engines": {
-    "node": ">= 8.0.0"
+    "node": ">= 14.0.0"
   },
   "files": [
     "lib/**/*"
@@ -50,7 +50,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\" && tslint --fix -c tslint.json 'src/**/*.ts'",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",
     "release": "release-it",

@@ -10,10 +10,10 @@ const MAX_BYTES = 512;
 // A very basic non-exception raising reader. Read bytes and
 // at the end use hasError() to check whether this worked.
 class Reader {
-  fileBuffer: Buffer;
-  size: number;
-  offset: number;
-  error: boolean;
+  public fileBuffer: Buffer;
+  public size: number;
+  public offset: number;
+  public error: boolean;
 
   constructor(fileBuffer: Buffer, size: number) {
     this.fileBuffer = fileBuffer;
@@ -22,11 +22,11 @@ class Reader {
     this.error = false;
   }
 
-  hasError(): boolean {
+  public hasError(): boolean {
     return this.error;
   }
 
-  nextByte(): number {
+  public nextByte(): number {
     if (this.offset === this.size || this.hasError()) {
       this.error = true;
       return 0xff;
@@ -34,7 +34,7 @@ class Reader {
     return this.fileBuffer[this.offset++];
   }
 
-  next(len: number): number[] {
+  public next(len: number): number[] {
     const n = new Array();
     for (let i = 0; i < len; i++) {
       n[i] = this.nextByte();
@@ -51,7 +51,7 @@ function readProtoVarInt(reader: Reader): number {
   while (!reader.hasError()) {
     const b = reader.nextByte();
     varInt = varInt | ((b & 0x7f) << (7 * idx));
-    if ((b & 0x80) == 0) {
+    if ((b & 0x80) === 0) {
       break;
     }
     idx++;
@@ -62,7 +62,7 @@ function readProtoVarInt(reader: Reader): number {
 
 // Attempt to taste a full Google Protobuf message.
 function readProtoMessage(reader: Reader): boolean {
-  let varInt = readProtoVarInt(reader);
+  const varInt = readProtoVarInt(reader);
   const wireType = varInt & 0x7;
 
   switch (wireType) {

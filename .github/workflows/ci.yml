@@ -1,8 +1,6 @@
 name: Node CI
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
   push:
 
 jobs:
@@ -12,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ '10', '12', '14' ]
+        node-version: ['14', '16', '18']
 
     steps:
       - uses: actions/checkout@v2
