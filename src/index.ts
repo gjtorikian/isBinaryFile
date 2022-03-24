@@ -7,6 +7,102 @@ const closeAsync = promisify(fs.close);
 
 const MAX_BYTES = 512;
 
+// A very basic non-exception raising reader. Read bytes and
+// at the end use hasError() to check whether this worked.
+class Reader {
+  fileBuffer: Buffer;
+  size: number;
+  offset: number;
+  error: boolean;
+
+  constructor(fileBuffer: Buffer, size: number) {
+    this.fileBuffer = fileBuffer;
+    this.size = size;
+    this.offset = 0;
+    this.error = false;
+  }
+
+  hasError(): boolean {
+    return this.error;
+  }
+
+  nextByte(): number {
+    if (this.offset === this.size || this.hasError()) {
+      this.error = true;
+      return 0xff;
+    }
+    return this.fileBuffer[this.offset++];
+  }
+
+  next(len: number): number[] {
+    const n = new Array();
+    for (let i = 0; i < len; i++) {
+      n[i] = this.nextByte();
+    }
+    return n;
+  }
+}
+
+// Read a Google Protobuf var(iable)int from the buffer.
+function readProtoVarInt(reader: Reader): number {
+  let idx = 0;
+  let varInt = 0;
+
+  while (!reader.hasError()) {
+    const b = reader.nextByte();
+    varInt = varInt | ((b & 0x7f) << (7 * idx));
+    if ((b & 0x80) == 0) {
+      break;
+    }
+    idx++;
+  }
+
+  return varInt;
+}
+
+// Attempt to taste a full Google Protobuf message.
+function readProtoMessage(reader: Reader): boolean {
+  let varInt = readProtoVarInt(reader);
+  const wireType = varInt & 0x7;
+
+  switch (wireType) {
+    case 0:
+      readProtoVarInt(reader);
+      return true;
+    case 1:
+      reader.next(8);
+      return true;
+    case 2:
+      const len = readProtoVarInt(reader);
+      reader.next(len);
+      return true;
+    case 5:
+      reader.next(4);
+      return true;
+  }
+  return false;
+}
+
+// Check whether this seems to be a valid protobuf file.
+function isBinaryProto(fileBuffer: Buffer, totalBytes: number): boolean {
+  const reader = new Reader(fileBuffer, totalBytes);
+  let numMessages = 0;
+
+  while (true) {
+    // Definitely not a valid protobuf
+    if (!readProtoMessage(reader) && !reader.hasError()) {
+      return false;
+    }
+    // Short read?
+    if (reader.hasError()) {
+      break;
+    }
+    numMessages++;
+  }
+
+  return numMessages > 0;
+}
+
 export async function isBinaryFile(file: string | Buffer, size?: number): Promise<boolean> {
   if (isString(file)) {
     const stat = await statAsync(file);
@@ -142,13 +238,17 @@ function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
 
       suspiciousBytes++;
       // Read at least 32 fileBuffer before making a decision
-      if (i > 32 && (suspiciousBytes * 100) / totalBytes > 10) {
+      if (i >= 32 && (suspiciousBytes * 100) / totalBytes > 10) {
         return true;
       }
     }
   }
 
   if ((suspiciousBytes * 100) / totalBytes > 10) {
+    return true;
+  }
+
+  if (suspiciousBytes > 1 && isBinaryProto(fileBuffer, totalBytes)) {
     return true;
   }
 

@@ -135,6 +135,37 @@ describe('async', () => {
 
     expect(result).toBe(true);
   });
+
+  it("should return false on a protobuf.proto", async () => {
+    const file = path.join(FIXTURE_PATH, "protobuf.proto");
+
+    expect.assertions(1);
+
+    const result = await isBinaryFile(file);
+
+    expect(result).toBe(false);
+  });
+
+  it("should return false on a protobuf.proto.txt", async () => {
+    const file = path.join(FIXTURE_PATH, "protobuf.proto.txt");
+
+    expect.assertions(1);
+
+    const result = await isBinaryFile(file);
+
+    expect(result).toBe(false);
+  });
+
+  it("should return true on a protobuf.proto.bin", async () => {
+    const file = path.join(FIXTURE_PATH, "protobuf.proto.bin");
+
+    expect.assertions(1);
+
+    const result = await isBinaryFile(file);
+
+    expect(result).toBe(true);
+  });
+
 });
 
 describe('sync', () => {
