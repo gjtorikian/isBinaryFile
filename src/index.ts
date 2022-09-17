@@ -5,7 +5,7 @@ const statAsync = promisify(fs.stat);
 const openAsync = promisify(fs.open);
 const closeAsync = promisify(fs.close);
 
-const MAX_BYTES = 512;
+const MAX_BYTES: number = 512;
 
 // A very basic non-exception raising reader. Read bytes and
 // at the end use hasError() to check whether this worked.
