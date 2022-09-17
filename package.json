@@ -22,7 +22,7 @@
     "@types/node": "^10.17.59",
     "jest": "^26.5.5",
     "prettier": "^1.19.1",
-    "release-it": "^14.13.1",
+    "release-it": "^15.4.2",
     "ts-jest": "^26.5.5",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
