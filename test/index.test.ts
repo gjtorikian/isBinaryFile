@@ -290,4 +290,12 @@ describe('sync', () => {
       }
     });
   });
+
+  it("should return false for charset=iso-8859-1 files", async () => {
+    const file = path.join(FIXTURE_PATH, "8859_1.txt");
+
+    const result = isBinaryFileSync(file);
+
+    expect(result).toBe(false);
+  });
 });
