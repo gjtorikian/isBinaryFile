@@ -249,7 +249,8 @@ describe('sync', () => {
 
     try {
       isBinaryFileSync(file);
-    } catch (e) {
+    } catch (e: any) {
+
       expect(e.message).toBe("Path provided was not a file!")
     }
   });
@@ -259,7 +260,7 @@ describe('sync', () => {
 
     try {
       isBinaryFileSync(file);
-    } catch (e) {
+    } catch (e: any) {
       expect(e.message).toBe("ENOENT: no such file or directory, stat 'test/fixtures/blahblahblbahhhhhh'")
     }
   });
