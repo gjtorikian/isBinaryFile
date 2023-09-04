@@ -13,7 +13,7 @@ jobs:
         node-version: ['16', '18']
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Node ${{ matrix.ruby-version }}
         uses: actions/setup-node@v3
         with:
