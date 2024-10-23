@@ -292,3 +292,9 @@ describe('sync', () => {
     });
   });
 });
+
+it("should return false on a UTF-8 file with emoji", () => {
+  const file = path.join(FIXTURE_PATH, "emoji.txt");
+  const result = isBinaryFileSync(file);
+  expect(result).toBe(false);
+});

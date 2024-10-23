@@ -223,15 +223,21 @@ function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
       return true;
     } else if ((fileBuffer[i] < 7 || fileBuffer[i] > 14) && (fileBuffer[i] < 32 || fileBuffer[i] > 127)) {
       // UTF-8 detection
-      if (fileBuffer[i] > 193 && fileBuffer[i] < 224 && i + 1 < totalBytes) {
+      if (fileBuffer[i] >= 0xc0 && fileBuffer[i] <= 0xdf && i + 1 < totalBytes) {
         i++;
-        if (fileBuffer[i] > 127 && fileBuffer[i] < 192) {
+        if (fileBuffer[i] >= 0x80 && fileBuffer[i] <= 0xbf) {
           continue;
         }
-      } else if (fileBuffer[i] > 223 && fileBuffer[i] < 240 && i + 2 < totalBytes) {
+      } else if (fileBuffer[i] >= 0xe0 && fileBuffer[i] <= 0xef && i + 2 < totalBytes) {
         i++;
-        if (fileBuffer[i] > 127 && fileBuffer[i] < 192 && fileBuffer[i + 1] > 127 && fileBuffer[i + 1] < 192) {
+        if (fileBuffer[i] >= 0x80 && fileBuffer[i] <= 0xbf && fileBuffer[i + 1] >= 0x80 && fileBuffer[i + 1] <= 0xbf) {
           i++;
+          continue;
+        }
+      } else if (fileBuffer[i] >= 0xf0 && fileBuffer[i] <= 0xf7 && i + 3 < totalBytes) {
+        i++;
+        if (fileBuffer[i] >= 0x80 && fileBuffer[i] <= 0xbf && fileBuffer[i + 1] >= 0x80 && fileBuffer[i + 1] <= 0xbf && fileBuffer[i + 2] >= 0x80 && fileBuffer[i + 2] <= 0xbf) {
+          i += 2;
           continue;
         }
       }
