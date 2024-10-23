@@ -236,7 +236,14 @@ function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
         }
       } else if (fileBuffer[i] >= 0xf0 && fileBuffer[i] <= 0xf7 && i + 3 < totalBytes) {
         i++;
-        if (fileBuffer[i] >= 0x80 && fileBuffer[i] <= 0xbf && fileBuffer[i + 1] >= 0x80 && fileBuffer[i + 1] <= 0xbf && fileBuffer[i + 2] >= 0x80 && fileBuffer[i + 2] <= 0xbf) {
+        if (
+          fileBuffer[i] >= 0x80 &&
+          fileBuffer[i] <= 0xbf &&
+          fileBuffer[i + 1] >= 0x80 &&
+          fileBuffer[i + 1] <= 0xbf &&
+          fileBuffer[i + 2] >= 0x80 &&
+          fileBuffer[i + 2] <= 0xbf
+        ) {
           i += 2;
           continue;
         }
