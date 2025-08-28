@@ -121,7 +121,11 @@ export async function isBinaryFile(file: string | Buffer, size?: number): Promis
         if (err) {
           reject(err);
         } else {
-          fulfill(isBinaryCheck(allocBuffer, bytesRead));
+          try {
+            fulfill(isBinaryCheck(allocBuffer, bytesRead));
+          } catch (error) {
+            reject(error);
+          }
         }
       });
     });
