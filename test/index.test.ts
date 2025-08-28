@@ -1,7 +1,7 @@
 import { isBinaryFile, isBinaryFileSync } from '../src/index';
 
 import * as fs from 'fs';
-import {promises as fsPromises} from 'fs';
+import { promises as fsPromises } from 'fs';
 import * as path from 'path';
 
 const FIXTURE_PATH = "./test/fixtures";
@@ -166,6 +166,16 @@ describe('async', () => {
     expect(result).toBe(true);
   });
 
+  it("should return false on a Vai script file", async () => {
+    const file = path.join(FIXTURE_PATH, "vai_script.txt");
+
+    expect.assertions(1);
+
+    const result = await isBinaryFile(file);
+
+    expect(result).toBe(false);
+  });
+
 });
 
 describe('sync', () => {
@@ -286,10 +296,18 @@ describe('sync', () => {
     const files = fs.readdirSync(encodingDir);
 
     files.forEach((file) => {
-      if (!/big5/.test(file) && !/gb/.test(file) && !/kr/.test(file)){
+      if (!/big5/.test(file) && !/gb/.test(file) && !/kr/.test(file)) {
         expect(isBinaryFileSync(path.join(encodingDir, file))).toBe(false);
       }
     });
+  });
+
+  it("should return false on a Vai script file", () => {
+    const file = path.join(FIXTURE_PATH, "vai_script.txt");
+
+    const result = isBinaryFileSync(file);
+
+    expect(result).toBe(false);
   });
 });
 

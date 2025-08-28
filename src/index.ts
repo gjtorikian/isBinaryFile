@@ -37,6 +37,10 @@ class Reader {
   public next(len: number): number[] {
     const n = new Array();
     for (let i = 0; i < len; i++) {
+      // Stop reading if an error occurred
+      if (this.error) {
+        return n;
+      }
       n[i] = this.nextByte();
     }
     return n;
@@ -52,6 +56,11 @@ function readProtoVarInt(reader: Reader): number {
     const b = reader.nextByte();
     varInt = varInt | ((b & 0x7f) << (7 * idx));
     if ((b & 0x80) === 0) {
+      break;
+    }
+    if (idx >= 10) {
+      // Varint can be between 1 and 10 bytes. This is too large.
+      reader.error = true;
       break;
     }
     idx++;
