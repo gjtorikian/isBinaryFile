@@ -352,3 +352,9 @@ it("should return false on UTF-8 file with 4-byte sequence truncated at byte 510
   const result = isBinaryFileSync(file);
   expect(result).toBe(false);
 });
+
+it("should return false on real-world Python file with UTF-8 at boundary (utf8-boundary-truncation bug case)", () => {
+  const file = path.join(FIXTURE_PATH, "utf8-boundary-truncation_case.py");
+  const result = isBinaryFileSync(file);
+  expect(result).toBe(false);
+});
