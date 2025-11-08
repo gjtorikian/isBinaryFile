@@ -316,3 +316,39 @@ it("should return false on a UTF-8 file with emoji", () => {
   const result = isBinaryFileSync(file);
   expect(result).toBe(false);
 });
+
+it("should return false on UTF-8 file with 4-byte sequence truncated at byte 508", () => {
+  const file = path.join(FIXTURE_PATH, "508A-4byte.txt");
+  const result = isBinaryFileSync(file);
+  expect(result).toBe(false);
+});
+
+it("should return false on UTF-8 file with 3-byte sequence truncated at byte 509", () => {
+  const file = path.join(FIXTURE_PATH, "509A-3byte.txt");
+  const result = isBinaryFileSync(file);
+  expect(result).toBe(false);
+});
+
+it("should return false on UTF-8 file with 4-byte sequence truncated at byte 509", () => {
+  const file = path.join(FIXTURE_PATH, "509A-4byte.txt");
+  const result = isBinaryFileSync(file);
+  expect(result).toBe(false);
+});
+
+it("should return false on UTF-8 file with 2-byte sequence truncated at byte 510", () => {
+  const file = path.join(FIXTURE_PATH, "510A-2byte.txt");
+  const result = isBinaryFileSync(file);
+  expect(result).toBe(false);
+});
+
+it("should return false on UTF-8 file with 3-byte sequence truncated at byte 510", () => {
+  const file = path.join(FIXTURE_PATH, "510A-3byte.txt");
+  const result = isBinaryFileSync(file);
+  expect(result).toBe(false);
+});
+
+it("should return false on UTF-8 file with 4-byte sequence truncated at byte 510", () => {
+  const file = path.join(FIXTURE_PATH, "510A-4byte.txt");
+  const result = isBinaryFileSync(file);
+  expect(result).toBe(false);
+});

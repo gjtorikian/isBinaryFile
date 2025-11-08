@@ -7,6 +7,14 @@ const closeAsync = promisify(fs.close);
 
 const MAX_BYTES: number = 512;
 
+// Standard UTF-8 max sequence length: 4 bytes (RFC 3629)
+// Type-checked to only allow 1-4; recommend 4 for standard UTF-8
+type ValidUTF8Length = 1 | 2 | 3 | 4;
+const MAX_UTF8_BYTE_LENGTH: ValidUTF8Length = 4;
+
+// Read extra bytes to validate UTF-8 sequences at buffer boundary
+const READ_BUFFER_SIZE: number = MAX_BYTES + MAX_UTF8_BYTE_LENGTH - 1;
+
 // A very basic non-exception raising reader. Read bytes and
 // at the end use hasError() to check whether this worked.
 class Reader {
@@ -120,12 +128,12 @@ export async function isBinaryFile(file: string | Buffer, size?: number): Promis
 
     const fileDescriptor = await openAsync(file, 'r');
 
-    const allocBuffer = Buffer.alloc(MAX_BYTES);
+    const allocBuffer = Buffer.alloc(READ_BUFFER_SIZE);
 
     // Read the file with no encoding for raw buffer access.
     // NB: something is severely wrong with promisify, had to construct my own Promise
     return new Promise((fulfill, reject) => {
-      fs.read(fileDescriptor, allocBuffer, 0, MAX_BYTES, 0, (err, bytesRead, _) => {
+      fs.read(fileDescriptor, allocBuffer, 0, READ_BUFFER_SIZE, 0, (err, bytesRead, _) => {
         closeAsync(fileDescriptor);
         if (err) {
           reject(err);
@@ -154,9 +162,9 @@ export function isBinaryFileSync(file: string | Buffer, size?: number): boolean 
 
     const fileDescriptor = fs.openSync(file, 'r');
 
-    const allocBuffer = Buffer.alloc(MAX_BYTES);
+    const allocBuffer = Buffer.alloc(READ_BUFFER_SIZE);
 
-    const bytesRead = fs.readSync(fileDescriptor, allocBuffer, 0, MAX_BYTES, 0);
+    const bytesRead = fs.readSync(fileDescriptor, allocBuffer, 0, READ_BUFFER_SIZE, 0);
     fs.closeSync(fileDescriptor);
 
     return isBinaryCheck(allocBuffer, bytesRead);
@@ -235,31 +243,46 @@ function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
       // NULL byte--it's binary!
       return true;
     } else if ((fileBuffer[i] < 7 || fileBuffer[i] > 14) && (fileBuffer[i] < 32 || fileBuffer[i] > 127)) {
-      // UTF-8 detection
-      if (fileBuffer[i] >= 0xc0 && fileBuffer[i] <= 0xdf && i + 1 < totalBytes) {
-        i++;
-        if (fileBuffer[i] >= 0x80 && fileBuffer[i] <= 0xbf) {
-          continue;
+      // UTF-8 detection with boundary check support
+      let validUTF8 = false;
+
+      // Detect UTF-8 sequence length from leading byte
+      let expectedLength = 0;
+      if (fileBuffer[i] >= 0xc0 && fileBuffer[i] <= 0xdf) {
+        expectedLength = 2;
+      } else if (fileBuffer[i] >= 0xe0 && fileBuffer[i] <= 0xef) {
+        expectedLength = 3;
+      } else if (fileBuffer[i] >= 0xf0 && fileBuffer[i] <= 0xf7) {
+        expectedLength = 4;
+      }
+
+      if (expectedLength > 0) {
+        // Check if we have enough bytes (may extend beyond totalBytes into bytesRead)
+        const maxCheckLimit = Math.min(i + expectedLength, bytesRead);
+
+        if (maxCheckLimit >= i + expectedLength) {
+          let allContinuationBytesValid = true;
+
+          // Validate continuation bytes (must be 0x80-0xbf)
+          for (let j = 1; j < expectedLength; j++) {
+            if (fileBuffer[i + j] < 0x80 || fileBuffer[i + j] > 0xbf) {
+              allContinuationBytesValid = false;
+              break;
+            }
+          }
+
+          if (allContinuationBytesValid) {
+            i += expectedLength - 1;
+            validUTF8 = true;
+          } else {
+            // Skip first continuation byte to avoid double-counting
+            i += 1;
+          }
         }
-      } else if (fileBuffer[i] >= 0xe0 && fileBuffer[i] <= 0xef && i + 2 < totalBytes) {
-        i++;
-        if (fileBuffer[i] >= 0x80 && fileBuffer[i] <= 0xbf && fileBuffer[i + 1] >= 0x80 && fileBuffer[i + 1] <= 0xbf) {
-          i++;
-          continue;
-        }
-      } else if (fileBuffer[i] >= 0xf0 && fileBuffer[i] <= 0xf7 && i + 3 < totalBytes) {
-        i++;
-        if (
-          fileBuffer[i] >= 0x80 &&
-          fileBuffer[i] <= 0xbf &&
-          fileBuffer[i + 1] >= 0x80 &&
-          fileBuffer[i + 1] <= 0xbf &&
-          fileBuffer[i + 2] >= 0x80 &&
-          fileBuffer[i + 2] <= 0xbf
-        ) {
-          i += 2;
-          continue;
-        }
+      }
+
+      if (validUTF8) {
+        continue;
       }
 
       suspiciousBytes++;
