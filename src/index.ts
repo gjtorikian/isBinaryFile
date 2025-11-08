@@ -6,6 +6,7 @@ const openAsync = promisify(fs.open);
 const closeAsync = promisify(fs.close);
 
 const MAX_BYTES: number = 512;
+const UTF8_BOUNDARY_RESERVE: number = 3;
 
 // A very basic non-exception raising reader. Read bytes and
 // at the end use hasError() to check whether this worked.
@@ -120,12 +121,12 @@ export async function isBinaryFile(file: string | Buffer, size?: number): Promis
 
     const fileDescriptor = await openAsync(file, 'r');
 
-    const allocBuffer = Buffer.alloc(MAX_BYTES);
+    const allocBuffer = Buffer.alloc(MAX_BYTES + UTF8_BOUNDARY_RESERVE);
 
     // Read the file with no encoding for raw buffer access.
     // NB: something is severely wrong with promisify, had to construct my own Promise
     return new Promise((fulfill, reject) => {
-      fs.read(fileDescriptor, allocBuffer, 0, MAX_BYTES, 0, (err, bytesRead, _) => {
+      fs.read(fileDescriptor, allocBuffer, 0, MAX_BYTES + UTF8_BOUNDARY_RESERVE, 0, (err, bytesRead, _) => {
         closeAsync(fileDescriptor);
         if (err) {
           reject(err);
@@ -154,9 +155,9 @@ export function isBinaryFileSync(file: string | Buffer, size?: number): boolean 
 
     const fileDescriptor = fs.openSync(file, 'r');
 
-    const allocBuffer = Buffer.alloc(MAX_BYTES);
+    const allocBuffer = Buffer.alloc(MAX_BYTES + UTF8_BOUNDARY_RESERVE);
 
-    const bytesRead = fs.readSync(fileDescriptor, allocBuffer, 0, MAX_BYTES, 0);
+    const bytesRead = fs.readSync(fileDescriptor, allocBuffer, 0, MAX_BYTES + UTF8_BOUNDARY_RESERVE, 0);
     fs.closeSync(fileDescriptor);
 
     return isBinaryCheck(allocBuffer, bytesRead);
@@ -175,7 +176,8 @@ function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
   }
 
   let suspiciousBytes = 0;
-  const totalBytes = Math.min(bytesRead, MAX_BYTES);
+  const totalBytes = Math.min(bytesRead, MAX_BYTES + UTF8_BOUNDARY_RESERVE);
+  const scanBytes = Math.min(totalBytes, MAX_BYTES);
 
   // UTF-8 BOM
   if (bytesRead >= 3 && fileBuffer[0] === 0xef && fileBuffer[1] === 0xbb && fileBuffer[2] === 0xbf) {
@@ -230,7 +232,7 @@ function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
     return false;
   }
 
-  for (let i = 0; i < totalBytes; i++) {
+  for (let i = 0; i < scanBytes; i++) {
     if (fileBuffer[i] === 0) {
       // NULL byte--it's binary!
       return true;
@@ -264,17 +266,17 @@ function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
 
       suspiciousBytes++;
       // Read at least 32 fileBuffer before making a decision
-      if (i >= 32 && (suspiciousBytes * 100) / totalBytes > 10) {
+      if (i >= 32 && (suspiciousBytes * 100) / (scanBytes) > 10) {
         return true;
       }
     }
   }
 
-  if ((suspiciousBytes * 100) / totalBytes > 10) {
+  if ((suspiciousBytes * 100) / (scanBytes) > 10) {
     return true;
   }
 
-  if (suspiciousBytes > 1 && isBinaryProto(fileBuffer, totalBytes)) {
+  if (suspiciousBytes > 1 && isBinaryProto(fileBuffer, scanBytes)) {
     return true;
   }
 
