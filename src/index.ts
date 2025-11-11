@@ -266,13 +266,13 @@ function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
 
       suspiciousBytes++;
       // Read at least 32 fileBuffer before making a decision
-      if (i >= 32 && (suspiciousBytes * 100) / (scanBytes) > 10) {
+      if (i >= 32 && (suspiciousBytes * 100) / scanBytes > 10) {
         return true;
       }
     }
   }
 
-  if ((suspiciousBytes * 100) / (scanBytes) > 10) {
+  if ((suspiciousBytes * 100) / scanBytes > 10) {
     return true;
   }
 
