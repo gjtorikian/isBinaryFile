@@ -18,18 +18,17 @@
     "is text file"
   ],
   "devDependencies": {
-    "@types/jest": "^23.3.14",
-    "@types/node": "^10.17.60",
+    "@types/jest": "^29",
+    "@types/node": "^18",
     "jest": "^29.7.0",
-    "prettier": "^1.19.1",
+    "oxlint": "^0.16",
+    "prettier": "^3",
     "release-it": "^19.0.4",
     "ts-jest": "^29.1.4",
-    "tslint": "^5.20.1",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^4.9.4"
+    "typescript": "^5"
   },
   "engines": {
-    "node": ">= 18.0.0"
+    "node": ">= 24.0.0"
   },
   "files": [
     "lib/**/*"
@@ -50,8 +49,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\" && tslint --fix -c tslint.json 'src/**/*.ts'",
-    "lint": "tslint -p tsconfig.json",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "oxlint src test",
     "prepare": "npm run build",
     "release": "release-it",
     "prepublishOnly": "npm test && npm run lint",
