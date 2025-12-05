@@ -2,6 +2,7 @@
   "name": "isbinaryfile",
   "description": "Detects if a file is binary in Node.js. Similar to Perl's -B.",
   "version": "5.0.7",
+  "type": "module",
   "keywords": [
     "text",
     "binary",
@@ -34,8 +35,14 @@
     "lib/**/*"
   ],
   "license": "MIT",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
   "maintainers": [
     {
       "name": "Garen J. Torikian",
@@ -57,7 +64,7 @@
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "test": "jest --config jestconfig.json",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --config jestconfig.json",
     "watch": "tsc -w"
   }
 }
