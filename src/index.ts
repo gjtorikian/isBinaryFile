@@ -1,8 +1,26 @@
-import * as fs from 'fs';
+import { statSync, openSync, readSync, closeSync, type Stats } from 'node:fs';
 import { open, stat } from 'node:fs/promises';
+import { detectUtf16NoBom, isTextWithEncodingHint } from './encoding.js';
+import type { EncodingHint } from './encoding.js';
+
+export { EncodingHint } from './encoding.js';
 
 const MAX_BYTES: number = 512;
 const UTF8_BOUNDARY_RESERVE: number = 3;
+
+/**
+ * Options for binary file detection.
+ */
+export interface IsBinaryOptions {
+  /**
+   * Hint about expected encoding to avoid false positives.
+   */
+  encoding?: EncodingHint;
+  /**
+   * Size of the buffer (only used when file is a Buffer).
+   */
+  size?: number;
+}
 
 // A very basic non-exception raising reader. Read bytes and
 // at the end use hasError() to check whether this worked.
@@ -32,6 +50,11 @@ class Reader {
   }
 
   public next(len: number): number[] {
+    // Prevent massive array allocation by checking bounds first
+    if (len < 0 || len > this.size - this.offset) {
+      this.error = true;
+      return [];
+    }
     const n = new Array();
     for (let i = 0; i < len; i++) {
       // Stop reading if an error occurred
@@ -109,7 +132,7 @@ function isBinaryProto(fileBuffer: Buffer, totalBytes: number): boolean {
   return numMessages > 0;
 }
 
-export async function isBinaryFile(file: string | Buffer, size?: number): Promise<boolean> {
+export async function isBinaryFile(file: string | Buffer, options?: IsBinaryOptions): Promise<boolean> {
   if (isString(file)) {
     const fileStat = await stat(file);
     isStatFile(fileStat);
@@ -118,41 +141,37 @@ export async function isBinaryFile(file: string | Buffer, size?: number): Promis
     try {
       const allocBuffer = Buffer.alloc(MAX_BYTES + UTF8_BOUNDARY_RESERVE);
       const { bytesRead } = await fileHandle.read(allocBuffer, 0, MAX_BYTES + UTF8_BOUNDARY_RESERVE, 0);
-      return isBinaryCheck(allocBuffer, bytesRead);
+      return isBinaryCheck(allocBuffer, bytesRead, options);
     } finally {
       await fileHandle.close();
     }
   } else {
-    if (size === undefined) {
-      size = file.length;
-    }
-    return isBinaryCheck(file, size);
+    const size = options?.size !== undefined ? options.size : file.length;
+    return isBinaryCheck(file, size, options);
   }
 }
 
-export function isBinaryFileSync(file: string | Buffer, size?: number): boolean {
+export function isBinaryFileSync(file: string | Buffer, options?: IsBinaryOptions): boolean {
   if (isString(file)) {
-    const stat = fs.statSync(file);
+    const fileStat = statSync(file);
 
-    isStatFile(stat);
+    isStatFile(fileStat);
 
-    const fileDescriptor = fs.openSync(file, 'r');
+    const fileDescriptor = openSync(file, 'r');
 
     const allocBuffer = Buffer.alloc(MAX_BYTES + UTF8_BOUNDARY_RESERVE);
 
-    const bytesRead = fs.readSync(fileDescriptor, allocBuffer, 0, MAX_BYTES + UTF8_BOUNDARY_RESERVE, 0);
-    fs.closeSync(fileDescriptor);
+    const bytesRead = readSync(fileDescriptor, allocBuffer, 0, MAX_BYTES + UTF8_BOUNDARY_RESERVE, 0);
+    closeSync(fileDescriptor);
 
-    return isBinaryCheck(allocBuffer, bytesRead);
+    return isBinaryCheck(allocBuffer, bytesRead, options);
   } else {
-    if (size === undefined) {
-      size = file.length;
-    }
-    return isBinaryCheck(file, size);
+    const size = options?.size !== undefined ? options.size : file.length;
+    return isBinaryCheck(file, size, options);
   }
 }
 
-function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
+function isBinaryCheck(fileBuffer: Buffer, bytesRead: number, options?: IsBinaryOptions): boolean {
   // empty file. no clue what it is.
   if (bytesRead === 0) {
     return false;
@@ -215,6 +234,18 @@ function isBinaryCheck(fileBuffer: Buffer, bytesRead: number): boolean {
     return false;
   }
 
+  // Handle encoding hints - if provided, use specialized validation
+  if (options?.encoding) {
+    return !isTextWithEncodingHint(fileBuffer, bytesRead, options.encoding);
+  }
+
+  // Auto-detect UTF-16 without BOM by analyzing null byte patterns
+  const utf16Detected = detectUtf16NoBom(fileBuffer, bytesRead);
+  if (utf16Detected) {
+    // Detected UTF-16 pattern, validate as text
+    return !isTextWithEncodingHint(fileBuffer, bytesRead, utf16Detected);
+  }
+
   for (let i = 0; i < scanBytes; i++) {
     if (fileBuffer[i] === 0) {
       // NULL byte--it's binary!
@@ -270,7 +301,7 @@ function isString(x: any): x is string {
   return typeof x === 'string';
 }
 
-function isStatFile(stat: fs.Stats): void {
+function isStatFile(stat: Stats): void {
   if (!stat.isFile()) {
     throw new Error(`Path provided was not a file!`);
   }
