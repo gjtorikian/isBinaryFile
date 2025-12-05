@@ -26,4 +26,4 @@ jobs:
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
-      - run: npm publish
+      - run: npm publish --provenance --access public
