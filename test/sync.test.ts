@@ -26,7 +26,7 @@ describe('sync', () => {
     const bytes = fs.readFileSync(path.join(FIXTURE_PATH, 'grep'));
     const size = fs.lstatSync(path.join(FIXTURE_PATH, 'grep')).size;
 
-    const result = isBinaryFileSync(bytes, size);
+    const result = isBinaryFileSync(bytes, { size });
 
     expect(result).toBe(true);
   });
@@ -43,7 +43,7 @@ describe('sync', () => {
     const bytes = fs.readFileSync(path.join(FIXTURE_PATH, 'perl_script'));
     const size = fs.lstatSync(path.join(FIXTURE_PATH, 'perl_script')).size;
 
-    const result = isBinaryFileSync(bytes, size);
+    const result = isBinaryFileSync(bytes, { size });
 
     expect(result).toBe(false);
   });
@@ -121,6 +121,8 @@ describe('sync', () => {
     const files = fs.readdirSync(encodingDir);
 
     files.forEach((file) => {
+      // Big5, GB, and Korean encodings require encoding hints to be detected as text.
+      // See encoding-hints.test.ts for tests with encoding hints.
       if (!/big5/.test(file) && !/gb/.test(file) && !/kr/.test(file)) {
         expect(isBinaryFileSync(path.join(encodingDir, file))).toBe(false);
       }

@@ -32,7 +32,7 @@ describe('async', () => {
 
     expect.assertions(1);
 
-    const result = await isBinaryFile(bytes, size);
+    const result = await isBinaryFile(bytes, { size });
 
     expect(result).toBe(true);
   });
@@ -53,7 +53,7 @@ describe('async', () => {
 
     expect.assertions(1);
 
-    const result = await isBinaryFile(bytes, size);
+    const result = await isBinaryFile(bytes, { size });
 
     expect(result).toBe(false);
   });
@@ -239,6 +239,8 @@ describe('async', () => {
     const files = fs.readdirSync(encodingDir);
 
     for (const file of files) {
+      // Big5, GB, and Korean encodings require encoding hints to be detected as text.
+      // See encoding-hints.test.ts for tests with encoding hints.
       if (!/big5/.test(file) && !/gb/.test(file) && !/kr/.test(file)) {
         expect(await isBinaryFile(path.join(encodingDir, file))).toBe(false);
       }
