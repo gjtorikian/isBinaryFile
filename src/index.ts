@@ -1,9 +1,5 @@
 import * as fs from 'fs';
-import { promisify } from 'util';
-
-const statAsync = promisify(fs.stat);
-const openAsync = promisify(fs.open);
-const closeAsync = promisify(fs.close);
+import { open, stat } from 'node:fs/promises';
 
 const MAX_BYTES: number = 512;
 const UTF8_BOUNDARY_RESERVE: number = 3;
@@ -115,30 +111,17 @@ function isBinaryProto(fileBuffer: Buffer, totalBytes: number): boolean {
 
 export async function isBinaryFile(file: string | Buffer, size?: number): Promise<boolean> {
   if (isString(file)) {
-    const stat = await statAsync(file);
+    const fileStat = await stat(file);
+    isStatFile(fileStat);
 
-    isStatFile(stat);
-
-    const fileDescriptor = await openAsync(file, 'r');
-
-    const allocBuffer = Buffer.alloc(MAX_BYTES + UTF8_BOUNDARY_RESERVE);
-
-    // Read the file with no encoding for raw buffer access.
-    // NB: something is severely wrong with promisify, had to construct my own Promise
-    return new Promise((fulfill, reject) => {
-      fs.read(fileDescriptor, allocBuffer, 0, MAX_BYTES + UTF8_BOUNDARY_RESERVE, 0, (err, bytesRead, _) => {
-        closeAsync(fileDescriptor);
-        if (err) {
-          reject(err);
-        } else {
-          try {
-            fulfill(isBinaryCheck(allocBuffer, bytesRead));
-          } catch (error) {
-            reject(error);
-          }
-        }
-      });
-    });
+    const fileHandle = await open(file, 'r');
+    try {
+      const allocBuffer = Buffer.alloc(MAX_BYTES + UTF8_BOUNDARY_RESERVE);
+      const { bytesRead } = await fileHandle.read(allocBuffer, 0, MAX_BYTES + UTF8_BOUNDARY_RESERVE, 0);
+      return isBinaryCheck(allocBuffer, bytesRead);
+    } finally {
+      await fileHandle.close();
+    }
   } else {
     if (size === undefined) {
       size = file.length;

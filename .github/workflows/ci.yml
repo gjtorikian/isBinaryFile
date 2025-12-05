@@ -13,17 +13,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: ['16', '18']
+        node-version: ['24']
 
     steps:
       - uses: actions/checkout@v6
-      - name: Set up Node ${{ matrix.ruby-version }}
-        uses: actions/setup-node@v6
+
+      - name: Set up Node
+        uses: gjtorikian/actions/setup-languages@main
         with:
+          node: true
           node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        run: npm install
+
       - name: Build Typescript
         run: npm run build
+
       - name: Run tests
         run: npm test
