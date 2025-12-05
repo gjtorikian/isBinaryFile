@@ -32,6 +32,11 @@ class Reader {
   }
 
   public next(len: number): number[] {
+    // Prevent massive array allocation by checking bounds first
+    if (len < 0 || len > this.size - this.offset) {
+      this.error = true;
+      return [];
+    }
     const n = new Array();
     for (let i = 0; i < len; i++) {
       // Stop reading if an error occurred

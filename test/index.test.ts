@@ -166,6 +166,19 @@ describe('async', () => {
     expect(result).toBe(true);
   });
 
+  it('should not crash on malformed protobuf-like data (issue #80)', async () => {
+    const buff = Buffer.from(
+      '82ACE2828045E382805FE1828053E7828045E7878045E8838145E2988445E2948545E2828D4CE2828A44E28280418CF7EC2E',
+      'hex',
+    );
+
+    expect.assertions(1);
+
+    const result = await isBinaryFile(buff);
+
+    expect(typeof result).toBe('boolean');
+  });
+
   it('should return false on a Vai script file', async () => {
     const file = path.join(FIXTURE_PATH, 'vai_script.txt');
 
@@ -305,6 +318,17 @@ describe('sync', () => {
     const result = isBinaryFileSync(file);
 
     expect(result).toBe(false);
+  });
+
+  it('should not crash on malformed protobuf-like data (issue #80)', () => {
+    const buff = Buffer.from(
+      '82ACE2828045E382805FE1828053E7828045E7878045E8838145E2988445E2948545E2828D4CE2828A44E28280418CF7EC2E',
+      'hex',
+    );
+
+    const result = isBinaryFileSync(buff);
+
+    expect(typeof result).toBe('boolean');
   });
 });
 
