@@ -1,9 +1,9 @@
 name: Publish Package
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
+  workflow_dispatch:
 
 permissions:
   id-token: write  # Required for OIDC
@@ -15,15 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v6
+      - name: Set up Node
+        uses: gjtorikian/actions/setup-languages@main
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          node: true
 
-      # Ensure npm 11.5.1 or later is installed
-      - name: Update npm
-        run: npm install -g npm@latest
-      - run: npm ci
       - run: npm run build --if-present
-      - run: npm test
+
       - run: npm publish --provenance --access public
