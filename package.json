@@ -20,7 +20,7 @@
   ],
   "devDependencies": {
     "@types/jest": "^30",
-    "@types/node": "^24",
+    "@types/node": "^25",
     "jest": "^30.2.0",
     "oxlint": "^1.31",
     "prettier": "^3",
