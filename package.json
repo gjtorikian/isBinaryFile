@@ -20,12 +20,12 @@
   ],
   "devDependencies": {
     "@types/jest": "^30",
-    "@types/node": "^25",
+    "@types/node": "^26",
     "jest": "^30",
     "oxlint": "^1.31",
     "prettier": "^3",
     "ts-jest": "^29.4.6",
-    "typescript": "^5"
+    "typescript": "^6"
   },
   "engines": {
     "node": ">= 24.0.0"
